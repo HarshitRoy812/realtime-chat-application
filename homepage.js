@@ -1,31 +1,22 @@
-const socket = io('http://localhost:5000');
+const socket = io('http://localhost:3000');
 
 const getName = async () => {
-    var name;
-    try {
-        name = await axios.get('http://localhost:3000/name');
-    } catch (err){
-        console.log(err);
-    }
+
+    var userName = sessionStorage.getItem('name');
+
+    socket.emit('new_user',userName);
 
     var user_name = document.getElementById('name');
-    user_name.innerText = `Welcome ${name.data} !`;
-    console.log(name.data);
+    user_name.innerText = `Welcome ${userName} !`;
 
-    socket.emit('new_user',name);
 }
 
 getName();
 
-
-
-
-
-
 const addToChat = (message,name,position) => {
     var div = document.createElement('div');
 
-    var nameContent = document.createElement('p');
+    var nameContent = document. createElement('p');
     nameContent.textContent = name;
     nameContent.classList.add('message_name');
     
@@ -79,10 +70,6 @@ sendMsgBtn.addEventListener('click',(e) => {
 
 })
 
-
-
-
-
 socket.on('user_joined',(name) => {
     
     addToChat2(name,'joined');
@@ -99,6 +86,7 @@ socket.on('receive_msg',(message,name) => {
 })
 
 socket.on('user_disconnected',(name) => {
-    
+    var audio = new Audio('user_left.mp3');
+    audio.play();
     addToChat2(name,'disconnect');
 })
